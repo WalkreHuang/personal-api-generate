@@ -92,9 +92,9 @@ class ApiMakeCommand extends Command
 
         $this->setModelData($name)
             ->setControllerData()
-            ->setRouteData()
             ->setExportData()
-            ->setServiceData();
+            ->setServiceData()
+            ->setRouteData();
     }
 
     /**
@@ -233,14 +233,17 @@ class ApiMakeCommand extends Command
 
         // read file
         $lines = file($routesFile);
-        $lastLine = trim($lines[count($lines) - 1]);
-
-        // modify file
-        if (strcmp($lastLine, '});') === 0) {
-            $lines[count($lines) - 1] = '    '.$stub;
-            $lines[] = "\r\n});\r\n";
-        } else {
+        if (count($lines) == 0) {
             $lines[] = "$stub\r\n";
+        } else {
+            $lastLine = trim($lines[count($lines) - 1]);
+            // modify file
+            if (strcmp($lastLine, '});') === 0) {
+                $lines[count($lines) - 1] = '    '.$stub;
+                $lines[] = "\r\n});\r\n";
+            } else {
+                $lines[] = "$stub\r\n";
+            }
         }
 
         // save file
