@@ -1,6 +1,6 @@
 <?php
 
-namespace Arrilot\Api\Skeleton;
+namespace Huangwalker\Api\Skeleton;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as LaravelController;

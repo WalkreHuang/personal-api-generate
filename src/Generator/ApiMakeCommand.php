@@ -1,6 +1,6 @@
 <?php
 
-namespace Arrilot\Api\Generator;
+namespace Huangwalker\Api\Generator;
 
 use Illuminate\Console\DetectsApplicationNamespace;
 use Illuminate\Console\Command;

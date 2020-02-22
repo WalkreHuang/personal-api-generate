@@ -1,8 +1,8 @@
 <?php
 
-namespace Arrilot\Api;
+namespace Huangwalker\Api;
 
-use Arrilot\Api\Generator\ApiMakeCommand;
+use Huangwalker\Api\Generator\ApiMakeCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {

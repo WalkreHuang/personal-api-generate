@@ -9,7 +9,7 @@
             "email": "huangwalker@qq.com"
         }
     ],
-    "homepage": "https://github.com/Arrilot/api-model-generator",
+    "homepage": "https://github.com/WalkreHuang/personal-api-generate",
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": ">=5.5",
