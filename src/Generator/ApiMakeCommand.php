@@ -30,7 +30,7 @@ class ApiMakeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create api controller, services and api routes for new model (api-template-generator)';
+    protected $description = 'Create api controller, services export and api routes for new model (api-template-generator)';
 
     /**
      * The array of variables available in stubs.
@@ -41,6 +41,7 @@ class ApiMakeCommand extends Command
         'app'         => [],
         'controller'  => [],
         'service'  => [],
+        'export'  => [],
         'route'       => [],
     ];
 
@@ -71,6 +72,8 @@ class ApiMakeCommand extends Command
 
         $this->createService();
 
+        $this->createExport();
+
         $this->addRoutes();
     }
 
@@ -90,6 +93,7 @@ class ApiMakeCommand extends Command
         $this->setModelData($name)
             ->setControllerData()
             ->setRouteData()
+            ->setExportData()
             ->setServiceData();
     }
 
@@ -154,6 +158,16 @@ class ApiMakeCommand extends Command
     protected function setServiceData()
     {
         return $this->setDataForEntity('service');
+    }
+
+    /**
+     * Set the service names and namespaces.
+     *
+     * @return $this
+     */
+    protected function setExportData()
+    {
+        return $this->setDataForEntity('export');
     }
 
     /**
