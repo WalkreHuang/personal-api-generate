@@ -233,17 +233,14 @@ class ApiMakeCommand extends Command
 
         // read file
         $lines = file($routesFile);
-        if (count($lines) == 0) {
-            $lines[] = "$stub\r\n";
+
+        $lastLine = trim($lines[count($lines) - 1]);
+        // modify file
+        if (strcmp($lastLine, '});') === 0) {
+            $lines[count($lines) - 1] = '    '.$stub;
+            $lines[] = "\r\n});\r\n";
         } else {
-            $lastLine = trim($lines[count($lines) - 1]);
-            // modify file
-            if (strcmp($lastLine, '});') === 0) {
-                $lines[count($lines) - 1] = '    '.$stub;
-                $lines[] = "\r\n});\r\n";
-            } else {
-                $lines[] = "$stub\r\n";
-            }
+            $lines[] = "$stub\r\n";
         }
 
         // save file
