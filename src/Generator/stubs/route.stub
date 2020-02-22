@@ -1,0 +1,3 @@
+Route::post('{{route.name}}/enroll', '{{model.fullNameWithoutRoot}}Controller@enroll');
+Route::get('{{route.name}}/list', '{{model.fullNameWithoutRoot}}Controller@getList');
+Route::get('{{route.name}}/export', '{{model.fullNameWithoutRoot}}Controller@export');

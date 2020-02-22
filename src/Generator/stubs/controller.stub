@@ -1,0 +1,94 @@
+<?php namespace {{controller.namespace}};
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\BaseController;
+use App\Common\DEFAULT_PAGE_PARAM;
+
+class {{controller.name}} extends BaseController
+{
+    //merchant controller
+    public function enroll(Request $request)
+    {
+        $this->validate($request, [
+            'merchant_id' => ['required', 'integer'],
+        ]);
+
+        $merchant_id = $request->input('merchant_id');
+
+        $service = new {{service.name}}();
+        $row = $service->setMerchantId($merchant_id)
+            ->enroll();
+        if ($row) {
+            return $this->succResponse();
+        } else {
+            return $this->failResponse($service->getErrMsg());
+        }
+    }
+
+    //police controller
+    public function getList(Request $request)
+    {
+        $this->validate($request, [
+            'page' => ['integer', 'min:1'],
+            'page_size' => ['integer', 'between:0,200'],
+            'begin_time' => ['date'],
+            'end_time' => ['date', 'after_or_equal:begin_time'],
+            'province_id' => ['integer'],
+            'city_id' => ['integer'],
+            'area_id' => ['integer'],
+            'station_id' => ['integer'],
+        ]);
+
+        $page = $request->input('page', DEFAULT_PAGE_PARAM::PAGE);
+        $page_size = $request->input('page_size', DEFAULT_PAGE_PARAM::PAGE_SIZE);
+
+        $begin_time = $request->input('begin_time');
+        $end_time = $request->input('end_time');
+        $station_ids = $request->input('station_ids');
+        $province_id = $request->input('province_id');
+        $city_id = $request->input('city_id');
+        $area_id = $request->input('area_id');
+        $station_id = $request->input('station_id');
+
+        $service = new {{service.name}}();
+        $list = $service->setPage($page)
+            ->setPageSize($page_size)
+            ->setProvinceId($province_id)
+            ->setCityId($city_id)
+            ->setAreaId($area_id)
+            ->setStationId($station_id)
+            ->getList($begin_time, $end_time, $station_ids);
+
+        return $this->succResponseData($list);
+    }
+
+    public function export(Request $request)
+    {
+        $this->validate($request, [
+            'begin_time' => ['date'],
+            'end_time' => ['date', 'after_or_equal:begin_time'],
+            'province_id' => ['integer'],
+            'city_id' => ['integer'],
+            'area_id' => ['integer'],
+            'station_id' => ['integer'],
+        ]);
+
+        $begin_time = $request->input('begin_time');
+        $end_time = $request->input('end_time');
+        $station_ids = $request->input('station_ids');
+        $province_id = $request->input('province_id');
+        $city_id = $request->input('city_id');
+        $area_id = $request->input('area_id');
+        $station_id = $request->input('station_id');
+
+        $service = new {{service.name}}();
+        $excel = $service->setProvinceId($province_id)
+            ->setCityId($city_id)
+            ->setAreaId($area_id)
+            ->setStationId($station_id)
+            ->export($begin_time, $end_time, $station_ids);
+
+        return $excel;
+    }
+
+}

@@ -1,0 +1,23 @@
+{
+    "name": "huangwalker/api-model-generator",
+    "description": "person simple tools for building APIs template : console generator and API skeleton",
+    "license": "MIT",
+    "keywords": ["api", "personal", "generator"],
+    "authors": [
+        {
+            "name": "huangwalker",
+            "email": "huangwalker@qq.com"
+        }
+    ],
+    "homepage": "https://github.com/Arrilot/api-model-generator",
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": ">=5.5",
+        "league/fractal": "0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Huangwalker\\Api\\": "src/"
+        }
+    }
+}

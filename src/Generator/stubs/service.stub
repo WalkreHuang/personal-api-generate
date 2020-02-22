@@ -1,0 +1,141 @@
+<?php namespace {{service.namespace}};
+
+use App\Exports\{{export.name}};
+use App\Http\Services\BaseSearchService;
+use App\Http\Repositories\Common\CommonRepository;
+use App\Http\Util\LogUtil;
+use App\Util\Common;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
+class {{service.name}} extends BaseSearchService
+{
+    private $merchant_id;
+
+    /**
+     * @return mixed
+     */
+    public function getMerchantId()
+    {
+        return $this->merchant_id;
+    }
+
+    /**
+     * @param mixed $merchant_id
+     * @return $this
+     */
+    public function setMerchantId($merchant_id)
+    {
+        $this->merchant_id = $merchant_id;
+        return $this;
+    }
+
+    /**
+     * 登记记录
+     * @return boolean
+     */
+    public function enroll()
+    {
+        try {
+            $now = Common::getFormatTime();
+            $enroll['merchant_id'] = $this->getMerchantId();
+            $enroll['created_at'] = $now;
+
+            CommonRepository::insertDataList('tables', [$enroll]);
+            return true;
+
+        } catch (\Exception $exception) {
+            $this->setErrMsg('登记失败，请稍后重试');
+            LogUtil::Log('登记提交错误: '.$exception->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 获取登记记录
+     * @param $begin_time
+     * @param $end_time
+     * @param $station_ids
+     * @return array
+     */
+    public function getList($begin_time, $end_time, $station_ids)
+    {
+        $list = $this->getEnrollRecord($begin_time, $end_time, $station_ids);
+        return $list;
+    }
+
+    /**
+     * 获取登记记录
+     * @param $begin_time
+     * @param $end_time
+     * @param $station_ids
+     * @param bool $is_paginate
+     * @return array
+     */
+    public function getEnrollRecord($begin_time, $end_time, $station_ids, $is_paginate = true)
+    {
+        $result['list'] = [];
+        $result['pagination'] = $this->pagination();
+        $is_intranet = config('app.is_intranet');
+        if (!$is_intranet) {
+            return $result;
+        }
+        $filter_stations = $this->filterQueryStationIds($station_ids, $this->getProvinceId(), $this->getCityId(), $this->getAreaId(), $this->getStationId());
+
+        $query_obj = DB::table('tables as hm')->leftJoin('kn_merchants_info as kmi', 'hm.merchant_id', '=', 'kmi.id')
+            ->leftJoin('kn_police_station as kps', 'kmi.office_id', '=', 'kps.id')
+            ->select([
+                'hm.id',
+            ])
+            ->whereIn('kps.id', $filter_stations);
+        if (!empty($begin_time)) {
+            $query_obj->where('hm.created_at', '>=', $begin_time);
+        }
+        if (!empty($end_time)) {
+            $query_obj->where('hm.created_at', '<=', $end_time);
+        }
+        //是否分页获取记录
+        if ($is_paginate) {
+            $page_size = $this->getPageSize();
+            $offset = ($this->getPage() -1) * $page_size;
+            $query_obj->offset($offset);
+            $query_obj->limit($page_size);
+            //获取总记录数
+            $total_obj = DB::table('tables as hm')
+                ->leftJoin('kn_merchants_info as kmi', 'hm.merchant_id', '=', 'kmi.id')
+                ->whereIn('office_id', $filter_stations);
+            if (!empty($begin_time)) {
+                $total_obj->where('hm.created_at', '>=', $begin_time);
+            }
+            if (!empty($end_time)) {
+                $total_obj->where('hm.created_at', '<=', $end_time);
+            }
+            $total = $total_obj->count();
+            $result['pagination'] = $this->pagination($total);
+        }
+
+        $records = $query_obj->orderBy('hm.id', 'desc')->get()->toArray();
+        if (empty($records)) {
+            return $result;
+        }
+
+        $result['list'] = $records;
+        return $result;
+    }
+
+   /**
+    * 导出登记报表
+    * @param $begin_time
+    * @param $end_time
+    * @param $station_ids
+    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+    */
+   public function export($begin_time, $end_time, $station_ids)
+   {
+       $excel_data = $this->getEnrollRecord($begin_time, $end_time, $station_ids, false);
+       $excel_name = '登记报表-'.time().'.xls';
+
+       return Excel::download(new {{export.name}}($excel_data['list']), $excel_name);
+   }
+
+}
