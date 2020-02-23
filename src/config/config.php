@@ -10,12 +10,12 @@ return [
     /*
      * Relative path from the app directory to service directory.
      */
-    'service_dir' => 'Api/Services',
+    'services_dir' => 'Api/Services',
 
     /*
      * Relative path from the app directory to the export file.
      */
-    'export_dir'      => 'Api/Exports',
+    'exports_dir'      => 'Api/Exports',
 
     /*
      * Relative path from the app directory to the api routes file.
