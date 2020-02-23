@@ -1,4 +1,5 @@
-<?php namespace {{service.namespace}};
+<?php
+namespace {{service.namespace}};
 
 use App\Exports\{{export.name}};
 use App\Http\Services\BaseSearchService;

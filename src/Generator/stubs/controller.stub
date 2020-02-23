@@ -1,4 +1,5 @@
-<?php namespace {{controller.namespace}};
+<?php
+namespace {{controller.namespace}};
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
